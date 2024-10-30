@@ -7,6 +7,7 @@ from issue import Issue, Issues
 import github
 from updateMilestoneField import updateMilestoneField_addArgs
 from report import report_addArgs
+from bulkedit import bulkedit_addArgs
 
 
 def saveIssues(basePath, issues: List[Issue]):
@@ -73,6 +74,7 @@ if __name__ == '__main__':
     updateIssues_addArgs(subparsers)
     updateMilestoneField_addArgs(subparsers)
     report_addArgs(subparsers)
+    bulkedit_addArgs(subparsers)
 
     args = parser.parse_args()
 

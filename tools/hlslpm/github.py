@@ -16,6 +16,7 @@ class GH:
         self.accessToken = get_pat()
         self.queries = {}
         self.projectMilestoneFieldInfo = None
+        self.statusFieldInfo = None
 
     def graphql(self, query: str, variables={}):
         response = requests.post("https://api.github.com/graphql",
@@ -118,14 +119,31 @@ class GH:
             self.projectMilestoneFieldInfo = self.get_project_field_info(
                 "ProjectMilestone")
 
-        query = self.get_query("gql/set_issue_project_milestone.gql")
+        query = self.get_query("gql/set_project_field.gql")
 
         f = self.projectMilestoneFieldInfo
         params = {
             "projectId": f["projectId"],
             "fieldId": f["fieldId"],
             "itemId": project_item_id,
-            "projectMilestone": f["options"][projectMilestone]
+            "fieldValue": f["options"][projectMilestone]
+        }
+
+        r = self.graphql(query, params)
+        if "errors" in r:
+            raise Exception(r["errors"])
+        
+    def set_status(self, project_item_id, newStatus):
+        if not self.statusFieldInfo:
+            self.statusFieldInfo = self.get_project_field_info('Status')
+
+        query = self.get_query("gql/set_project_field.gql")
+        f = self.statusFieldInfo
+        params = {
+            "projectId": f["projectId"],
+            "fieldId": f["fieldId"],
+            "itemId": project_item_id,
+            "fieldValue": f["options"][newStatus]
         }
 
         r = self.graphql(query, params)
