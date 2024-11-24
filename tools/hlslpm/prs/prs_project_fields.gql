@@ -1,0 +1,25 @@
+query ($organizationLogin: String!, $projectNumber: Int!, $after: String) {
+  organization(login: $organizationLogin) {
+    projectV2(number: $projectNumber) {
+      fields(first: 100, after: $after) {
+        nodes {
+          ... on ProjectV2FieldCommon {
+            id
+            name
+            dataType         
+          }
+          ... on ProjectV2SingleSelectField {
+            options {
+              name
+              id
+            }
+          }
+        }
+        pageInfo {
+          endCursor
+          hasNextPage
+        }
+      }
+    }
+  }
+}

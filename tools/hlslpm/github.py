@@ -27,6 +27,30 @@ class GH:
 
         return response.json()
 
+    def paged_query(self, queryFilename, variables):
+        query = self.get_query(queryFilename)
+
+        pageInfo = {'endCursor': None, 'hasNextPage': True}
+
+        while pageInfo['hasNextPage']:
+            response = self.graphql(
+                query, variables | {'after': pageInfo['endCursor']})
+            
+            #print(json.dumps(response))
+            
+            nodes = get_entry('nodes', response)
+            for node in nodes:
+                yield node
+
+            pageInfo = get_entry('pageInfo', response)
+
+    def query(self, queryFilename, variables):
+        query = self.get_query(queryFilename)
+
+        response = self.graphql(query, variables)
+        return response
+            
+
     def project_items_summary(self) -> Generator[Issue, Any, None]:
         query = self.get_query(
             "gql/project_item_summary.gql")
@@ -161,6 +185,13 @@ class GH:
         self.queries[name] = query
 
         return query
+
+def get_entry(name: str, d: dict):
+    if name in d:
+        return d[name]
+    
+    for value in d.values():
+        return get_entry(name, value)
 
 
 def maybe_get(d: dict, *args):

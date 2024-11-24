@@ -1,0 +1,56 @@
+query ($after: String, $organizationLogin: String!, $projectNumber: Int!) {
+  organization(login: $organizationLogin) {
+    projectV2(number: $projectNumber) {
+      items(first: 100, after: $after) {
+        nodes {
+          id          
+          status: fieldValueByName(name: "Status") {
+            ... on ProjectV2ItemFieldSingleSelectValue {
+              name
+            }
+          }
+          pr_created: fieldValueByName(name: "PR Created") {
+            ... on ProjectV2ItemFieldDateValue {
+              date
+            }
+          }
+          last_commits: fieldValueByName(name: "Last Commits") {
+            ... on ProjectV2ItemFieldDateValue {
+              date
+            }
+          }
+          pr_author: fieldValueByName(name: "PR Author") {
+            ... on ProjectV2ItemFieldTextValue {
+              text
+            }
+          }
+          content {
+            ... on PullRequest {
+              id
+              url
+              updatedAt
+              createdAt
+              author {
+                login
+              }
+              commits(last: 1) {
+                nodes {
+                  commit {
+                    committedDate
+                  }
+                }
+              }
+              reviews {
+                totalCount
+              }
+            }
+          }
+        }
+        pageInfo {
+          endCursor
+          hasNextPage
+        }
+      }
+    }
+  }
+}
