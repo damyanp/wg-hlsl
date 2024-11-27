@@ -64,13 +64,13 @@ class Updater:
         if item['pr_author'] == None:
             updates['PR Author'] = pr['author']['login']
 
-        prCreated = date.fromisoformat(item['pr_created']['date'])
+        prCreated = get_as_date(github.maybe_get(item, 'pr_created', 'date'))
         createdAt = datetime.fromisoformat(pr['createdAt']).date()
 
         if prCreated != createdAt:
             updates['PR Created'] = str(createdAt)
 
-        lastCommits = date.fromisoformat(item['last_commits']['date'])
+        lastCommits = get_as_date(github.maybe_get(item, 'last_commits', 'date'))
         committedDate = datetime.fromisoformat(pr['commits']['nodes'][0]['commit']['committedDate']).date()
         if lastCommits != committedDate:
             updates['Last Commits'] = str(committedDate)
@@ -131,3 +131,8 @@ def make_field(field):
                                 for o in field["options"]])
     return namedtuple('field', field.keys())(*field.values())
 
+def get_as_date(text):
+    if not text:
+        return None
+
+    return date.fromisoformat(text)
