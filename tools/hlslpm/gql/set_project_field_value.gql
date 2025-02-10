@@ -2,14 +2,14 @@ mutation (
   $projectId: ID!
   $itemId: ID!
   $fieldId: ID!
-  $projectMilestone: String!
+  $optionId: String!
 ) {
   updateProjectV2ItemFieldValue(
     input: {
       projectId: $projectId
       itemId: $itemId
       fieldId: $fieldId
-      value: { singleSelectOptionId: $projectMilestone }
+      value: { singleSelectOptionId: $optionId }
     }
   ) {
     clientMutationId

@@ -35,9 +35,9 @@ class GH:
         while pageInfo['hasNextPage']:
             response = self.graphql(
                 query, variables | {'after': pageInfo['endCursor']})
-            
-            #print(json.dumps(response))
-            
+
+            # print(json.dumps(response))
+
             nodes = get_entry('nodes', response)
             for node in nodes:
                 yield node
@@ -49,7 +49,6 @@ class GH:
 
         response = self.graphql(query, variables)
         return response
-            
 
     def project_items_summary(self) -> Generator[Issue, Any, None]:
         query = self.get_query(
@@ -142,14 +141,18 @@ class GH:
             self.projectMilestoneFieldInfo = self.get_project_field_info(
                 "ProjectMilestone")
 
-        query = self.get_query("gql/set_issue_project_milestone.gql")
-
         f = self.projectMilestoneFieldInfo
+        self.set_project_field(
+            f["projectId"], project_item_id, f["fieldId"], f["options"][projectMilestone])
+
+    def set_project_field(self, project_id, project_item_id, project_field_id, project_option_id):
+        query = self.get_query("gql/set_project_field_value.gql")
+
         params = {
-            "projectId": f["projectId"],
-            "fieldId": f["fieldId"],
+            "projectId": project_id,
+            "fieldId": project_field_id,
             "itemId": project_item_id,
-            "projectMilestone": f["options"][projectMilestone]
+            "optionId": project_option_id
         }
 
         r = self.graphql(query, params)
@@ -186,10 +189,11 @@ class GH:
 
         return query
 
+
 def get_entry(name: str, d: dict):
     if name in d:
         return d[name]
-    
+
     for value in d.values():
         return get_entry(name, value)
 

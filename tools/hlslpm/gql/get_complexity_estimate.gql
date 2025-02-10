@@ -1,0 +1,41 @@
+query ($after: String) {
+  organization(login: "llvm") {
+    projectV2(number: 4) {
+      items(first: 100, after: $after) {
+        nodes {
+          id
+          type
+          isArchived
+
+          content {
+            ... on Issue {
+              resourcePath
+              title
+            }
+            ... on PullRequest {
+              resourcePath
+              title
+            }
+            ... on DraftIssue {
+                title
+            }
+          }
+          complexity: fieldValueByName(name: "Complexity") {
+            ... on ProjectV2ItemFieldSingleSelectValue {
+              optionId
+            }
+          }
+          estimate: fieldValueByName(name: "Estimate") {
+            ... on ProjectV2ItemFieldSingleSelectValue {
+              optionId
+            }
+          }
+        }
+        pageInfo {
+          endCursor
+          hasNextPage
+        }
+      }
+    }
+  }
+}

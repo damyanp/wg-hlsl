@@ -8,6 +8,7 @@ import github
 from updateMilestoneField import updateMilestoneField_addArgs
 from updatePRProject import updatePRProject_addArgs
 from report import report_addArgs
+from updateEstimates import updateEstimates_addArgs
 
 
 def saveIssues(basePath, issues: List[Issue]):
@@ -75,6 +76,7 @@ if __name__ == '__main__':
     updateMilestoneField_addArgs(subparsers)
     report_addArgs(subparsers)
     updatePRProject_addArgs(subparsers)
+    updateEstimates_addArgs(subparsers)
 
     args = parser.parse_args()
 
